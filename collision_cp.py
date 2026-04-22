@@ -63,10 +63,8 @@ def wigner_smith_matrix(collision_energy, H_goe, W_squared):
     A_prime = abar / 2 / k
     G_mqdt = (1 / 3 - abar ** 2) * np.square(k)
     G_prime = (1 / 3 - abar ** 2)
-    eta_mqdt = -abar * k
-    eta_prime = -abar / 2 / k 
 
-    collision_energy = np.reshape(collision_energy, (len(collision_energy), 1))
+    collision_energy = collision_energy.reshape((-1, 1))
     energy_diff = collision_energy - H_goe
     ratio = W_squared / energy_diff
 
@@ -76,8 +74,18 @@ def wigner_smith_matrix(collision_energy, H_goe, W_squared):
     K_mat = A_mqdt * Y_mat / (1 + G_mqdt * Y_mat)
     K_prime = (A_prime * Y_mat + A_mqdt * Y_prime) / (1 + G_mqdt * Y_mat) - A_mqdt * Y_mat * (G_prime * Y_mat + G_mqdt * Y_prime) / (1 + G_mqdt * Y_mat) ** 2
 
-    Q_mat = 2 * (eta_prime + K_prime / (1 + K_mat ** 2))
+    Q_mat = 2 * (K_prime / (1 + K_mat ** 2))
     return Q_mat
+
+def S_matrix_alt(collision_energy, H_goe, W_mat):
+    num_res = len(H_goe)
+
+    D = np.diag(collision_energy - H_goe) + 1j * np.pi * np.square(W_mat)
+
+    S = 1 - 2j * np.pi * np.inner(W_mat, numpy.linalg.inv(D) @ W_mat)
+
+    return S
+
 
 def wigner_smith_matrix_single(collision_energy, H_goe, W_squared):
     # values for calculation
@@ -98,7 +106,7 @@ def wigner_smith_matrix_single(collision_energy, H_goe, W_squared):
     K_mat = A_mqdt * Y_mat / (1 + G_mqdt * Y_mat)
     K_prime = (A_prime * Y_mat + A_mqdt * Y_prime) / (1 + G_mqdt * Y_mat) - A_mqdt * Y_mat * (G_prime * Y_mat + G_mqdt * Y_prime) / (1 + G_mqdt * Y_mat) ** 2
 
-    Q_mat = 2 * (eta_prime + K_prime / (1 + K_mat ** 2))
+    Q_mat = 2 * (K_prime / (1 + K_mat ** 2))
     
     return Q_mat
 
@@ -116,7 +124,7 @@ def S_matrix(collision_energy, H_goe, W_squared):
     Y_mat = -np.pi * np.sum(ratio, axis=1)
 
     K_mat = A_mqdt * Y_mat / (1 + G_mqdt * Y_mat)
-    S_mat = np.exp(2j * eta_mqdt) * (1 + 1j * K_mat) / (1 - 1j * K_mat)
+    S_mat = (1 + 1j * K_mat) / (1 - 1j * K_mat)
 
     return S_mat    
 

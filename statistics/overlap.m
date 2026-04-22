@@ -1,0 +1,37 @@
+function output = overlap(iR1, iR2, iK, s, ...
+             N, MN, L, ML, f, mf, mR2, mK, ...
+             J, iR, I, P, F, MF )
+%  overlap between asymptotic and complex states
+
+output = 0;   %  default, if other things don't work out
+
+MJ = ML + MN;
+[th cg] = thrj(L, N, J, ML, MN, -MJ );
+% disp([th cg])
+prefac = cg;
+sum = 0;
+count = 0;
+for mR1p = -iR1 : 2 : iR1
+    for ms = -s: 2: s
+        for mR = -iR : 2 : iR
+            for MP = -P : 2: P
+                for MI = -I : 2 : I
+                    count = count + 1;
+                    [th1 cg1] = thrj(s, iR1, f, ms, mR1p, -mf);
+                    [th2 cg2] = thrj(iR1, iR2, iR, mR1p, mR2, -mR);
+                    [th3 cg3] = thrj(iR, iK, I, mR, mK, -MI);
+                    [th4 cg4] = thrj(I, s, P, MI, ms, -MP);
+                    [th5 cg5] = thrj(J, P, F, MJ, MP,-MF);
+                    % disp("Numbers")
+                    % disp([mR1p ms mR MP MI])
+                    % disp([cg1 cg2 cg3 cg4 cg5])
+                    sum = sum + cg1*cg2*cg3*cg4*cg5;
+                end
+            end
+        end
+    end
+end
+
+output = prefac * sum;
+
+end

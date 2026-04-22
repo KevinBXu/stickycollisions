@@ -1,0 +1,6 @@
+Notes 6/14/2024
+--anti periodic boundary condition from negative sign (check the formula)
+--possible: rewrite code to use periodic boundary conditions
+--calculating the S matrix: compute (k - k') * L for a couple of different dispersions
+--alternative: compute A and B for A * e^(ikx) + B * e^(-ikx) before and after the boundary
+--TODO: check quadratic dispersion 
